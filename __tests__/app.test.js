@@ -105,6 +105,126 @@ describe("/api/articles/:article_id",()=>{
                     expect(msg).toBe("Invalid article_id")
                 })
     })
+
+
+    // PATCH
+    test("PATCH 201 should increase votes of the specific article and return the article", () => {
+
+        const newVote = {
+            inc_votes: 100
+        }
+
+        return request(app)
+        .patch("/api/articles/1")
+        .send(newVote)
+        .expect(201)
+            .then(({ body }) => {
+                const article = body
+
+                const desiredArticle =   {
+                    title: "Living in the shadow of a great man",
+                    topic: "mitch",
+                    author: "butter_bridge",
+                    body: "I find this existence challenging",
+                    created_at: "2020-07-09T20:11:00.000Z",
+                    votes: 200, // Increment the votes by 100
+                    article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                }
+
+                expect(article).toMatchObject(desiredArticle)
+            })
+    })
+
+    test("PATCH 201 should decrease votes of the specific article and return the article", () => {
+
+        const newVote = {
+            inc_votes: -100
+        }
+
+        return request(app)
+        .patch("/api/articles/1")
+        .send(newVote)
+        .expect(201)
+            .then(({ body }) => {
+                const article = body
+
+                const desiredArticle =   {
+                    title: "Living in the shadow of a great man",
+                    topic: "mitch",
+                    author: "butter_bridge",
+                    body: "I find this existence challenging",
+                    created_at: "2020-07-09T20:11:00.000Z",
+                    votes: 0, // Increment the votes by 100
+                    article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                }
+
+                expect(article).toMatchObject(desiredArticle)
+            })
+    })
+
+    test("PATCH 400 should return an error when the inc_votes isn't an number", () => {
+
+        const newVote = {
+            inc_votes: "Hi"
+        }
+
+        return request(app)
+        .patch("/api/articles/1")
+        .send(newVote)
+        .expect(400)
+        .then(({body})=>{
+            const {msg} = body
+            expect(msg).toBe("New votes need to be a number")
+        })
+    })
+
+    test("PATCH 400 should return an error when the inc_vote isn't correctly formatted", () => {
+
+        const newVote = {
+            John: 100
+        }
+
+        return request(app)
+        .patch("/api/articles/1")
+        .send(newVote)
+        .expect(400)
+        .then(({body})=>{
+            const {msg} = body
+            expect(msg).toBe("Invalid new votes")
+        })
+    })
+
+
+    test("PATCH 404 when given an valid but non-existent article_id",()=>{
+    
+        const newVote = {
+            inc_votes: 100
+        }
+
+        return request(app)
+            .patch("/api/articles/100")
+            .send(newVote)
+            .expect(404)
+                .then(({body})=>{
+                    const {msg} = body
+                    expect(msg).toBe("article_id does not exist")
+                })
+    })
+    test("PATCH 400 when given an invalid article_id",()=>{
+    
+        const newVote = {
+            inc_votes: 100
+        }
+
+        return request(app)
+            .patch("/api/articles/banana")
+            .send(newVote)
+            .expect(400)
+                .then(({body})=>{
+                    const {msg} = body
+                    expect(msg).toBe("Invalid article_id")
+                })
+    })
 })
 
 describe("/api/articles/:article_id/comments",()=>{

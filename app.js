@@ -1,7 +1,7 @@
 const express = require("express")
 const app = express()
 
-const { getAllTopics, getAllEndpoints, getArticleById, getAllArticles, getAllCommentsFromArticleId, postNewComment } = require("./controllers/controllers")
+const { getAllTopics, getAllEndpoints, getArticleById, getAllArticles, getAllCommentsFromArticleId, postNewComment, patchArticle } = require("./controllers/controllers")
 
 app.use(express.json())
 
@@ -16,6 +16,8 @@ app.get('/api/articles/:article_id', getArticleById)
 app.get('/api/articles/:article_id/comments', getAllCommentsFromArticleId)
 
 app.post('/api/articles/:article_id/comments', postNewComment)
+
+app.patch('/api/articles/:article_id', patchArticle)
 
 
 app.use((req, res, next) => {

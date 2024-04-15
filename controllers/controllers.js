@@ -1,4 +1,4 @@
-const { selectAllTopics, selectAllEndpoints, selectArticleById, selectAllArticles, selectAllCommentsFromArticleId, updateNewComment }= require("../models/models")
+const { selectAllTopics, selectAllEndpoints, selectArticleById, selectAllArticles, selectAllCommentsFromArticleId, updateNewComment, updateArticleVotes }= require("../models/models")
 
 exports.getAllEndpoints = (req, res, next) => {
     const endpoints = selectAllEndpoints()
@@ -60,6 +60,18 @@ exports.postNewComment = (req, res, next) => {
     updateNewComment(newComment, article_id)
     .then((comment) => {
         res.status(201).send({comment})
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+exports.patchArticle = (req, res, next) => {
+    const newVote = req.body
+    const { article_id } = req.params
+    updateArticleVotes(newVote, article_id)
+    .then((article) => {
+        res.status(201).send(article)
     })
     .catch((err) => {
         next(err)
