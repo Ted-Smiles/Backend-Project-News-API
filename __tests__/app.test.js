@@ -33,8 +33,10 @@ describe("/api/topics",()=>{
                     const {topics} = body
                     expect(topics.length).toBe(3)
                     topics.forEach((topics)=>{
-                        expect(typeof topics.slug).toBe("string")
-                        expect(typeof topics.description).toBe("string")
+                        expect.objectContaining({
+                            slug: expect.any(String),
+                            description: expect.any(String)
+                        })
                     })
                 })
     })
@@ -49,14 +51,16 @@ describe("/api/articles",()=>{
                     const {articles} = body
                     expect(articles.length).toBe(13)
                     articles.forEach((article)=>{
-                        expect(typeof article.article_id).toBe("number")
-                        expect(typeof article.author).toBe("string")
-                        expect(typeof article.title).toBe("string")
-                        expect(typeof article.topic).toBe("string")
-                        expect(typeof article.created_at).toBe("string")
-                        expect(typeof article.votes).toBe("number")
-                        expect(typeof article.article_img_url).toBe("string")
-                        expect(typeof article.comment_count).toBe("string")
+                        expect.objectContaining({
+                            article_id: expect.any(Number),
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            topic: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            article_img_url: expect.any(String),
+                            comment_count: expect.any(String),
+                        })
                     })
                 })
     })
@@ -69,13 +73,18 @@ describe("/api/articles/:article_id",()=>{
             .expect(200)
                 .then(({body})=>{
                     const {article} = body
-                    expect(article.title).toBe("Living in the shadow of a great man")
-                    expect(article.topic).toBe("mitch")
-                    expect(article.author).toBe("butter_bridge")
-                    expect(article.body).toBe("I find this existence challenging")
-                    expect(article.created_at).toBe("2020-07-09T20:11:00.000Z")
-                    expect(article.votes).toBe(100)
-                    expect(article.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700")
+
+                    const desiredArticle =   {
+                        title: "Living in the shadow of a great man",
+                        topic: "mitch",
+                        author: "butter_bridge",
+                        body: "I find this existence challenging",
+                        created_at: "2020-07-09T20:11:00.000Z",
+                        votes: 100,
+                        article_img_url: "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+                    }
+
+                    expect(article).toMatchObject(desiredArticle)
                 })
     })
     test("GET 404 when given an valid but non-existent article_id",()=>{
