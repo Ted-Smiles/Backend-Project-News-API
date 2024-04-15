@@ -1,9 +1,11 @@
 const express = require("express")
 const app = express()
 
-const { getAllTopics } = require("./controllers/controllers")
+const { getAllTopics, getAllEndpoints } = require("./controllers/controllers")
 
-app.use(express.json())
+// app.use(express.json())
+
+app.get('/api', getAllEndpoints)
 
 app.get('/api/topics', getAllTopics)
 
@@ -17,7 +19,6 @@ app.use((req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-    console.log(err)
     if (err.status && err.msg) {
         res.status(err.status).send({ msg: err.msg });
     } else {

@@ -1,4 +1,9 @@
 const db = require("../db/connection")
+const endpoints = require("../endpoints.json")
+
+exports.selectAllEndpoints = () => {
+    return endpoints
+}
 
 exports.selectAllTopics = () => {
     const queryValues = []

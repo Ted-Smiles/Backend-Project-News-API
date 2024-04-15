@@ -1,4 +1,9 @@
-const { selectAllTopics }= require("../models/models")
+const { selectAllTopics, selectAllEndpoints }= require("../models/models")
+
+exports.getAllEndpoints = (req, res, next) => {
+    const endpoints = selectAllEndpoints()
+    res.status(200).send({requestedEndpoints: endpoints})
+}
 
 exports.getAllTopics = (req, res, next) => {
     selectAllTopics()
