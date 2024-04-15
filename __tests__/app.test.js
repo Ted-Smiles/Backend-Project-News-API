@@ -87,7 +87,7 @@ describe("/api/articles/:article_id",()=>{
                     expect(article).toMatchObject(desiredArticle)
                 })
     })
-    test("GET 404 when given an valid but non-existent article_id",()=>{
+    test("GET 404 when given a valid but non-existent article_id",()=>{
         return request(app)
             .get("/api/articles/100")
             .expect(404)
@@ -96,7 +96,7 @@ describe("/api/articles/:article_id",()=>{
                     expect(msg).toBe("article_id does not exist")
                 })
     })
-    test("GET 404 when given an valid but non-existent article_id",()=>{
+    test("GET 404 when given an invalid article_id",()=>{
         return request(app)
             .get("/api/articles/banana")
             .expect(404)
