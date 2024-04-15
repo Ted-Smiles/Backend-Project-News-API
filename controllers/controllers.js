@@ -1,4 +1,4 @@
-const { selectAllTopics, selectAllEndpoints, selectArticleById }= require("../models/models")
+const { selectAllTopics, selectAllEndpoints, selectArticleById, selectAllArticles }= require("../models/models")
 
 exports.getAllEndpoints = (req, res, next) => {
     const endpoints = selectAllEndpoints()
@@ -10,7 +10,19 @@ exports.getAllTopics = (req, res, next) => {
     .then(({ rows }) => {
         const topics = rows
 
-        res.status(200).send({topics})
+        res.status(200).send({ topics })
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+exports.getAllArticles = (req, res, next) => {
+    selectAllArticles()
+    .then(( { rows }) => {
+        const articles = rows
+
+        res.status(200).send({ articles })
     })
     .catch((err) => {
         next(err)
@@ -20,17 +32,10 @@ exports.getAllTopics = (req, res, next) => {
 exports.getArticleById = (req, res, next) => {
     const { article_id } = req.params
     selectArticleById(article_id)
-    .then(({ rows }) => {
-        if (rows.length === 0) {
-            const err = {
-                status: 404,
-                msg: 'Invalid article_id'
-            }
-            next(err)
-        } else {
-            const article = rows[0]
-    
-            res.status(200).send({article})
-        }
+    .then(( article ) => {
+        res.status(200).send({article})
+    })
+    .catch((err) => {
+        next(err)
     })
 }
