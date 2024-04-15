@@ -301,6 +301,32 @@ describe("/api/articles/:article_id/comments",()=>{
             expect(comment).toMatchObject(finalComment)
         })
     })
+
+    test("POST 201 and the created comment should work even if there are unnecessary properties in the new comment", () => {
+
+        const newComment = {
+            author: "butter_bridge",
+            body: "This is a test comment",
+            date: "Monday",
+            weather: "Windy"
+        }
+
+        return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({body})=>{
+            const {comment} = body
+            
+            const finalComment = {
+                author: "butter_bridge",
+                body: "This is a test comment",
+                article_id: 1
+            }
+            expect(comment).toMatchObject(finalComment)
+        })
+    })
+
     test("POST 404 when given an valid but non-existent article_id",()=>{
 
         const newComment = {
