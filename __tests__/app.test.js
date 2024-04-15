@@ -40,6 +40,33 @@ describe("/api/topics",()=>{
     })
 })
 
+describe("/api/topics",()=>{
+    test("GET 200 and the requested article by id", () => {
+        return request(app)
+            .get("/api/articles/1")
+            .expect(200)
+                .then(({body})=>{
+                    const {article} = body
+                    expect(article.title).toBe("Living in the shadow of a great man")
+                    expect(article.topic).toBe("mitch")
+                    expect(article.author).toBe("butter_bridge")
+                    expect(article.body).toBe("I find this existence challenging")
+                    expect(article.created_at).toBe("2020-07-09T20:11:00.000Z")
+                    expect(article.votes).toBe(100)
+                    expect(article.article_img_url).toBe("https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700")
+                })
+    })
+    test("GET 404 when given an invalid article_id",()=>{
+        return request(app)
+            .get("/api/articles/100")
+            .expect(404)
+                .then(({body})=>{
+                    const {msg} = body
+                    expect(msg).toBe("Invalid article_id")
+                })
+    })
+})
+
 describe("Invalid endpoint", () => {
     test("GET 404 where the request is not found", () => {
         return request(app)
