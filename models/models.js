@@ -6,8 +6,7 @@ exports.selectAllEndpoints = () => {
 }
 
 exports.selectAllTopics = () => {
-    const queryValues = []
     let queryStr = `SELECT * FROM topics`
 
-    return db.query(queryStr, queryValues)
+    return db.query(queryStr)
 }
