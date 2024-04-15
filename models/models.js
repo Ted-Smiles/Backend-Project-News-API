@@ -30,10 +30,26 @@ exports.selectArticleById = (id) => {
             return rows[0]
         }
     })
-    .catch((err) => {
-        if (err.code === '42703') {
-            err = {status: 404, msg: 'Invalid article_id'}
+}
+
+exports.selectAllCommentsFromArticleId = (id) => {
+    let queryStr = `SELECT * FROM comments`
+
+    queryStr += ` WHERE article_id = ${id}`
+
+    return db.query(queryStr)
+    .then(({ rows }) => {
+        if (rows.length === 0) {
+            return this.selectArticleById(id)
+            .then((article) => {
+                if (article.length === 0) {
+                    return Promise.reject({ status: 404, msg: 'article_id does not exist' });
+                } else {
+                    return Promise.reject({ status: 200, msg: 'There are no comments on this article'})
+                }
+            })
+        } else {
+            return rows
         }
-        return Promise.reject({status: err.status, msg: err.msg})
     })
 }
