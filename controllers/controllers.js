@@ -1,4 +1,4 @@
-const { selectAllTopics, selectAllEndpoints, selectArticleById, selectAllArticles }= require("../models/models")
+const { selectAllTopics, selectAllEndpoints, selectArticleById, selectAllArticles, selectAllCommentsFromArticleId }= require("../models/models")
 
 exports.getAllEndpoints = (req, res, next) => {
     const endpoints = selectAllEndpoints()
@@ -36,6 +36,23 @@ exports.getArticleById = (req, res, next) => {
         res.status(200).send({article})
     })
     .catch((err) => {
+        if (err.code === '42703') {
+            err = {status: 404, msg: 'Invalid article_id'}
+        }
+        next(err)
+    })
+}
+
+exports.getAllCommentsFromArticleId = (req, res, next) => {
+    const { article_id } = req.params
+    selectAllCommentsFromArticleId(article_id)
+    .then (( comments ) => {
+        res.status(200).send({comments})
+    })
+    .catch((err) => {
+        if (err.code === '42703') {
+            err = {status: 404, msg: 'Invalid article_id'}
+        }
         next(err)
     })
 }
