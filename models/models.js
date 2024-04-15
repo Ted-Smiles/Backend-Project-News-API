@@ -35,19 +35,19 @@ exports.selectArticleById = (id) => {
 exports.selectAllCommentsFromArticleId = (id) => {
     let queryStr = `SELECT * FROM comments`
 
-    queryStr += ` WHERE article_id = ${id}`
+    queryStr += ` WHERE article_id = $1`
 
-    return db.query(queryStr)
-    .then(({ rows }) => {
-        if (rows.length === 0) {
-            return this.selectArticleById(id)
-            .then((article) => {
-                if (article.length === 0) {
-                    return Promise.reject({ status: 404, msg: 'article_id does not exist' });
-                } else {
-                    return Promise.reject({ status: 200, msg: 'There are no comments on this article'})
-                }
-            })
+    const promise1 =  db.query(queryStr, [id])
+    const promise2  =  this.selectArticleById(id)
+
+    return Promise.all([promise1, promise2])
+    .then(([{ rows }, article]) => {
+        if (rows.length === 0) { 
+            if (article.length === 0) {
+                return Promise.reject({ status: 404, msg: 'article_id does not exist' });
+            } else {
+                return Promise.reject({ status: 200, msg: 'There are no comments on this article'})
+            }
         } else {
             return rows
         }

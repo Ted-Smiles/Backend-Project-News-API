@@ -115,6 +115,7 @@ describe("/api/articles/:article_id/comments",()=>{
             .expect(200)
                 .then(({body})=>{
                     const {comments} = body
+                    expect(comments.length).toBe(11)
                     comments.forEach(comment => {
                         expect.objectContaining({
                             comment_id: expect.any(Number),
@@ -145,10 +146,10 @@ describe("/api/articles/:article_id/comments",()=>{
                     expect(msg).toBe("article_id does not exist")
                 })
     })
-    test("GET 404 when given an valid but non-existent article_id",()=>{
+    test("GET 400 when given an invalid article_id",()=>{
         return request(app)
             .get("/api/articles/banana/comments")
-            .expect(404)
+            .expect(400)
                 .then(({body})=>{
                     const {msg} = body
                     expect(msg).toBe("Invalid article_id")
@@ -196,7 +197,7 @@ describe("/api/articles/:article_id/comments",()=>{
                     expect(msg).toBe("article_id does not exist")
                 })
     })
-    test("POST 404 when given an valid but non-existent article_id",()=>{
+    test("POST 400 when given an invalid article_id",()=>{
 
         const newComment = {
             author: "butter_bridge",
@@ -206,7 +207,7 @@ describe("/api/articles/:article_id/comments",()=>{
         return request(app)
             .post("/api/articles/banana/comments")
             .send(newComment)
-            .expect(404)
+            .expect(400)
                 .then(({body})=>{
                     const {msg} = body
                     expect(msg).toBe("Invalid article_id")

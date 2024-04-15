@@ -50,9 +50,6 @@ exports.getAllCommentsFromArticleId = (req, res, next) => {
         res.status(200).send({comments})
     })
     .catch((err) => {
-        if (err.code === '42703') {
-            err = {status: 404, msg: 'Invalid article_id'}
-        }
         next(err)
     })
 }
@@ -65,15 +62,6 @@ exports.postNewComment = (req, res, next) => {
         res.status(201).send({comment})
     })
     .catch((err) => {
-        if (err.code === '23502') {
-            err = {status: 404, msg: 'Invalid new comment'}
-        } else if (err.code === '23503' && err.constraint === 'comments_author_fkey') {
-            err = {status: 404, msg: 'Not a valid user'}
-        } else if (err.code === '23503' && err.constraint == 'comments_article_id_fkey') {
-            err = {status: 404, msg: 'article_id does not exist'}
-        } else if (err.code === '22P02') {
-            err = {status: 404, msg: 'Invalid article_id'}
-        }
         next(err)
     })
 }
