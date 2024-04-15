@@ -10,3 +10,11 @@ exports.selectAllTopics = () => {
 
     return db.query(queryStr)
 }
+
+exports.selectArticleById = (id) => {
+    let queryStr = `SELECT * FROM articles`
+
+    queryStr += ` WHERE article_id = ${id}`
+
+    return db.query(queryStr)
+}

@@ -1,13 +1,15 @@
 const express = require("express")
 const app = express()
 
-const { getAllTopics, getAllEndpoints } = require("./controllers/controllers")
+const { getAllTopics, getAllEndpoints, getArticleById } = require("./controllers/controllers")
 
 // app.use(express.json())
 
 app.get('/api', getAllEndpoints)
 
 app.get('/api/topics', getAllTopics)
+
+app.get('/api/articles/:article_id', getArticleById)
 
 
 app.use((req, res, next) => {
