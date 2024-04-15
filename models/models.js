@@ -53,3 +53,21 @@ exports.selectAllCommentsFromArticleId = (id) => {
         }
     })
 }
+
+exports.updateNewComment = (newComment, id) => {
+    const { author, body } = newComment
+
+    return db.query(`
+        INSERT INTO comments
+            (author, body, article_id)
+        VALUES
+            ($1, $2, $3)
+        RETURNING *
+        `, [author, body, id])
+    
+    .then(({ rows }) => {
+        return rows[0]
+    })
+
+
+}

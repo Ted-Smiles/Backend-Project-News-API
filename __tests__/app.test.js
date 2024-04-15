@@ -108,6 +108,7 @@ describe("/api/articles/:article_id",()=>{
 })
 
 describe("/api/articles/:article_id/comments",()=>{
+    // GET
     test("GET 200 and the requested article by id", () => {
         return request(app)
             .get("/api/articles/1/comments")
@@ -153,6 +154,99 @@ describe("/api/articles/:article_id/comments",()=>{
                     expect(msg).toBe("Invalid article_id")
                 })
     })
+
+
+
+    // Post
+    test("POST 201 and the created comment", () => {
+
+        const newComment = {
+            author: "butter_bridge",
+            body: "This is a test comment"
+        }
+
+        return request(app)
+        .post("/api/articles/1/comments")
+        .send(newComment)
+        .expect(201)
+        .then(({body})=>{
+            const {comment} = body
+            
+            const finalComment = {
+                author: "butter_bridge",
+                body: "This is a test comment",
+                article_id: 1
+            }
+            expect(comment).toMatchObject(finalComment)
+        })
+    })
+    test("POST 404 when given an valid but non-existent article_id",()=>{
+
+        const newComment = {
+            author: "butter_bridge",
+            body: "This is a test comment"
+        }
+
+        return request(app)
+            .post("/api/articles/100/comments")
+            .send(newComment)
+            .expect(404)
+                .then(({body})=>{
+                    const {msg} = body
+                    expect(msg).toBe("article_id does not exist")
+                })
+    })
+    test("POST 404 when given an valid but non-existent article_id",()=>{
+
+        const newComment = {
+            author: "butter_bridge",
+            body: "This is a test comment"
+        }
+
+        return request(app)
+            .post("/api/articles/banana/comments")
+            .send(newComment)
+            .expect(404)
+                .then(({body})=>{
+                    const {msg} = body
+                    expect(msg).toBe("Invalid article_id")
+                })
+    })
+
+    test("POST 400 when given an invalid new comment with a invalid value",()=>{
+
+        const newComment = {
+            author: "TedSmiles",
+            body: "This is a test comment"
+        }
+
+        return request(app)
+            .post("/api/articles/1/comments")
+            .send(newComment)
+            .expect(404)
+                .then(({body})=>{
+                    const {msg} = body
+                    expect(msg).toBe("Not a valid user")
+                })
+    })
+
+    test("POST 400 when given an invalid new comment with a invalid key",()=>{
+
+        const newComment = {
+            john: "butter_bridge",
+            body: "This is a test comment"
+        }
+
+        return request(app)
+            .post("/api/articles/1/comments")
+            .send(newComment)
+            .expect(404)
+                .then(({body})=>{
+                    const {msg} = body
+                    expect(msg).toBe("Invalid new comment")
+                })
+    })
+
 })
 
 describe("Invalid endpoint", () => {
