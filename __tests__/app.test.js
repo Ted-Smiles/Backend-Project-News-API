@@ -64,6 +64,36 @@ describe("/api/articles",()=>{
                     })
                 })
     })
+    test("GET 200 and all articles of a topic (mitch) upon request", () => {
+        return request(app)
+            .get("/api/articles?topic=mitch")
+            .expect(200)
+                .then(({body})=>{
+                    const {articles} = body
+                    expect(articles.length).toBe(12)
+                    articles.forEach((article)=>{
+                        expect(article.topic).toBe('mitch')
+                    })
+                })
+    })
+    test("GET 200 and no articles when passed a valid but non-existent topic", () => {
+        return request(app)
+            .get("/api/articles?topic=toby")
+            .expect(200)
+                .then(({body})=>{
+                    const {articles} = body
+                    expect(articles.length).toBe(0)
+                })
+    })
+    test("GET 200 and all articles when passed anything other than a topic (ignores invalid queries)", () => {
+        return request(app)
+            .get("/api/articles?test=testing")
+            .expect(200)
+                .then(({body})=>{
+                    const {articles} = body
+                    expect(articles.length).toBe(13)
+                })
+    })
 })
 
 describe("/api/articles/:article_id",()=>{
