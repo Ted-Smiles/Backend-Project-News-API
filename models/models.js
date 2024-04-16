@@ -80,3 +80,14 @@ exports.updateArticleVotes = ({ inc_votes }, id) => {
         }
     })
 }
+
+exports.deleteSpecificComment = (id) => {
+    return db.query(`DELETE FROM comments WHERE comment_id = $1 RETURNING *`,[id])
+    .then(({ rows }) => {
+        if (rows[0] === undefined) {
+            return Promise.reject({ status: 404, msg: 'article_id does not exist'})
+        } else {
+            return rows[0]
+        }
+    })
+}
