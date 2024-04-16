@@ -6,7 +6,7 @@ const {
     selectAllCommentsFromArticleId, 
     updateNewComment, 
     updateArticleVotes, 
-    deleteSpecificComment,
+    deleteCommentById,
     selectAllUser } = require("../models/models")
 
 exports.getAllEndpoints = (req, res, next) => {
@@ -100,7 +100,7 @@ exports.patchArticle = (req, res, next) => {
 
 exports.deleteComment = (req, res, next) => {
     const { comment_id } = req.params
-    deleteSpecificComment(comment_id)
+    deleteCommentById(comment_id)
     .then(() => {
         res.status(204).send()
     })
