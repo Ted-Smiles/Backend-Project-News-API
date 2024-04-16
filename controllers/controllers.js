@@ -6,7 +6,8 @@ const {
     selectAllCommentsFromArticleId, 
     updateNewComment, 
     updateArticleVotes, 
-    deleteSpecificComment } = require("../models/models")
+    deleteSpecificComment,
+    selectAllUser } = require("../models/models")
 
 exports.getAllEndpoints = (req, res, next) => {
     const endpoints = selectAllEndpoints()
@@ -19,6 +20,17 @@ exports.getAllTopics = (req, res, next) => {
         const topics = rows
 
         res.status(200).send({ topics })
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+exports.getAllUsers = (req, res, next) => {
+    selectAllUser()
+    .then(({ rows }) => {
+        const users = rows
+        res.status(200).send({ users })
     })
     .catch((err) => {
         next(err)
@@ -96,3 +108,4 @@ exports.deleteComment = (req, res, next) => {
         next(err)
     })
 }
+
