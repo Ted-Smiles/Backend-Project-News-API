@@ -71,12 +71,6 @@ exports.updateNewComment = (newComment, id) => {
 }
 
 exports.updateArticleVotes = ({ inc_votes }, id) => {
-    if (inc_votes === undefined) {
-        return Promise.reject({ status: 400, msg: 'Invalid new votes'})
-    } else if (typeof inc_votes !== 'number') {
-        return Promise.reject({ status: 400, msg: 'New votes need to be a number'})
-    }
-
     return db.query(`UPDATE articles SET votes = votes + $1 WHERE article_id = $2 RETURNING *`,[inc_votes, id])
     .then(({rows}) => {
         if (rows[0] === undefined) {

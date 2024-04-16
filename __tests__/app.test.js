@@ -108,7 +108,7 @@ describe("/api/articles/:article_id",()=>{
 
 
     // PATCH
-    test("PATCH 201 should increase votes of the specific article and return the article", () => {
+    test("PATCH 200 should increase votes of the specific article and return the article", () => {
 
         const newVote = {
             inc_votes: 100
@@ -117,9 +117,9 @@ describe("/api/articles/:article_id",()=>{
         return request(app)
         .patch("/api/articles/1")
         .send(newVote)
-        .expect(201)
+        .expect(200)
             .then(({ body }) => {
-                const article = body
+                const { article } = body
 
                 const desiredArticle =   {
                     title: "Living in the shadow of a great man",
@@ -135,7 +135,7 @@ describe("/api/articles/:article_id",()=>{
             })
     })
 
-    test("PATCH 201 should decrease votes of the specific article and return the article", () => {
+    test("PATCH 200 should decrease votes of the specific article and return the article", () => {
 
         const newVote = {
             inc_votes: -100
@@ -144,9 +144,9 @@ describe("/api/articles/:article_id",()=>{
         return request(app)
         .patch("/api/articles/1")
         .send(newVote)
-        .expect(201)
+        .expect(200)
             .then(({ body }) => {
-                const article = body
+                const { article } = body
 
                 const desiredArticle =   {
                     title: "Living in the shadow of a great man",
@@ -174,7 +174,7 @@ describe("/api/articles/:article_id",()=>{
         .expect(400)
         .then(({body})=>{
             const {msg} = body
-            expect(msg).toBe("New votes need to be a number")
+            expect(msg).toBe("Invalid path params")
         })
     })
 
@@ -190,7 +190,7 @@ describe("/api/articles/:article_id",()=>{
         .expect(400)
         .then(({body})=>{
             const {msg} = body
-            expect(msg).toBe("Invalid new votes")
+            expect(msg).toBe("Invalid new entry")
         })
     })
 
@@ -222,7 +222,7 @@ describe("/api/articles/:article_id",()=>{
             .expect(400)
                 .then(({body})=>{
                     const {msg} = body
-                    expect(msg).toBe("Invalid article_id")
+                    expect(msg).toBe("Invalid path params")
                 })
     })
 })
@@ -272,7 +272,7 @@ describe("/api/articles/:article_id/comments",()=>{
             .expect(400)
                 .then(({body})=>{
                     const {msg} = body
-                    expect(msg).toBe("Invalid article_id")
+                    expect(msg).toBe("Invalid path params")
                 })
     })
 
@@ -356,7 +356,7 @@ describe("/api/articles/:article_id/comments",()=>{
             .expect(400)
                 .then(({body})=>{
                     const {msg} = body
-                    expect(msg).toBe("Invalid article_id")
+                    expect(msg).toBe("Invalid path params")
                 })
     })
 
@@ -387,10 +387,10 @@ describe("/api/articles/:article_id/comments",()=>{
         return request(app)
             .post("/api/articles/1/comments")
             .send(newComment)
-            .expect(404)
+            .expect(400)
                 .then(({body})=>{
                     const {msg} = body
-                    expect(msg).toBe("Invalid new comment")
+                    expect(msg).toBe("Invalid new entry")
                 })
     })
 

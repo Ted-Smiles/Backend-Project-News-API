@@ -31,13 +31,13 @@ app.use((req, res, next) => {
 app.use((err, req, res, next) => {
 
     if (err.code === '23502') {
-        err = {status: 404, msg: 'Invalid new comment'}
+        err = {status: 400, msg: 'Invalid new entry'}
     } else if (err.code === '23503' && err.constraint === 'comments_author_fkey') {
         err = {status: 404, msg: 'Not a valid user'}
     } else if (err.code === '23503' && err.constraint == 'comments_article_id_fkey') {
         err = {status: 404, msg: 'article_id does not exist'}
     } else if (err.code === '22P02') {
-        err = {status: 400, msg: 'Invalid article_id'}
+        err = {status: 400, msg: 'Invalid path params'}
     } 
 
 
