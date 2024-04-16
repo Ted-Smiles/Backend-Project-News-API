@@ -396,6 +396,34 @@ describe("/api/articles/:article_id/comments",()=>{
 
 })
 
+
+describe("/api/comments/:comment_id",()=>{  
+    test("DELETE 204, delete the comment from the comment id", () => {
+        return request(app)
+        .delete("/api/comments/1")
+        .expect(204)
+    })
+    test("DELETE 404 when given an valid but non-existent article_id", () => {
+        return request(app)
+        .delete("/api/comments/100")
+        .expect(404)
+        .then(({ body })=>{
+            const { msg } = body
+            expect(msg).toBe("article_id does not exist")
+        })
+    })
+    test("DELETE 400 when given an invalid article_id", () => {
+        return request(app)
+        .delete("/api/comments/banana")
+        .expect(400)
+        .then(({ body })=>{
+            const { msg } = body
+            expect(msg).toBe("Invalid path params")
+        })
+    })
+})
+
+
 describe("Invalid endpoint", () => {
     test("GET 404 where the request is not found", () => {
         return request(app)
