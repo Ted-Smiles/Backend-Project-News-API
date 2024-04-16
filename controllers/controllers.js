@@ -38,7 +38,8 @@ exports.getAllUsers = (req, res, next) => {
 }
 
 exports.getAllArticles = (req, res, next) => {
-    selectAllArticles()
+    const { topic } = req.query
+    selectAllArticles(topic)
     .then(( { rows }) => {
         const articles = rows
 

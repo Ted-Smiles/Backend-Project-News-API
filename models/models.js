@@ -17,10 +17,18 @@ exports.selectAllUser = () => {
     return db.query(queryStr)
 }
 
-exports.selectAllArticles = () => {
-    let queryStr = `SELECT articles.article_id, articles.author, title, topic, articles.created_at, articles.votes, article_img_url, COUNT (comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id GROUP BY articles.article_id;`
+exports.selectAllArticles = (topicQuery) => {
+    const queryValues = []
+    let queryStr = `SELECT articles.article_id, articles.author, title, topic, articles.created_at, articles.votes, article_img_url, COUNT (comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id`
 
-    return db.query(queryStr)
+    if (topicQuery) {
+        queryValues.push(topicQuery)
+        queryStr += ` WHERE topic = $${queryValues.length}`
+    }
+
+    queryStr += ` GROUP BY articles.article_id`
+
+    return db.query(queryStr, queryValues)
 }
 
 exports.selectArticleById = (id) => {
