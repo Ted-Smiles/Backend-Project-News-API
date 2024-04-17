@@ -491,6 +491,122 @@ describe("/api/articles/:article_id/comments",()=>{
 
 
 describe("/api/comments/:comment_id",()=>{ 
+    // PATCH
+    test("PATCH 200 should increase votes of the specific comment and return the comment", () => {
+
+        const newVote = {
+            inc_votes: 100
+        }
+
+        return request(app)
+        .patch("/api/comments/3")
+        .send(newVote)
+        .expect(200)
+            .then(({ body }) => {
+                const { comment } = body
+
+                const desiredAComment=   {
+                    body: "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+                    votes: 200,
+                    author: "icellusedkars",
+                    article_id: 1,
+                    created_at: "2020-03-01T01:13:00.000Z"
+                }
+
+                expect(comment).toMatchObject(desiredAComment)
+            })
+    })
+
+    test("PATCH 200 should decrease votes of the specific article and return the article", () => {
+
+        const newVote = {
+            inc_votes: -100
+        }
+
+        return request(app)
+        .patch("/api/comments/3")
+        .send(newVote)
+        .expect(200)
+            .then(({ body }) => {
+                const { comment } = body
+
+                const desiredComment =   {
+                    body: "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+                    votes: 0, // decrease votes by 100
+                    author: "icellusedkars",
+                    article_id: 1,
+                    created_at: "2020-03-01T01:13:00.000Z"
+                }
+
+                expect(comment).toMatchObject(desiredComment)
+            })
+    })
+
+    test("PATCH 400 should return an error when the inc_votes isn't an number", () => {
+
+        const newVote = {
+            inc_votes: "Hi"
+        }
+
+        return request(app)
+        .patch("/api/comments/3")
+        .send(newVote)
+        .expect(400)
+        .then(({ body })=>{
+            const { msg } = body
+            expect(msg).toBe("Invalid path params")
+        })
+    })
+
+    test("PATCH 400 should return an error when the inc_vote isn't correctly formatted", () => {
+
+        const newVote = {
+            John: 100
+        }
+
+        return request(app)
+        .patch("/api/comments/1")
+        .send(newVote)
+        .expect(400)
+        .then(({ body })=>{
+            const { msg } = body
+            expect(msg).toBe("Invalid new entry")
+        })
+    })
+
+
+    test("PATCH 404 when given an valid but non-existent comment_id",()=>{
+    
+        const newVote = {
+            inc_votes: 100
+        }
+
+        return request(app)
+            .patch("/api/comments/100")
+            .send(newVote)
+            .expect(404)
+                .then(({ body })=>{
+                    const { msg } = body
+                    expect(msg).toBe("comment_id does not exist")
+                })
+    })
+    test("PATCH 400 when given an invalid comment_id",()=>{
+    
+        const newVote = {
+            inc_votes: 100
+        }
+
+        return request(app)
+            .patch("/api/comments/banana")
+            .send(newVote)
+            .expect(400)
+                .then(({ body })=>{
+                    const { msg } = body
+                    expect(msg).toBe("Invalid path params")
+                })
+    })
+    
+    // DELETE
     test("DELETE 204, delete the comment from the comment id", () => {
         return request(app)
         .delete("/api/comments/1")
