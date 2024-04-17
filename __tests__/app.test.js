@@ -490,7 +490,7 @@ describe("/api/articles/:article_id/comments",()=>{
 })
 
 
-describe("/api/comments/:comment_id",()=>{  
+describe("/api/comments/:comment_id",()=>{ 
     test("DELETE 204, delete the comment from the comment id", () => {
         return request(app)
         .delete("/api/comments/1")
