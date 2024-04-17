@@ -50,7 +50,7 @@ describe("/api/articles",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
-                    expect(articles.length).toBe(13)
+                    expect(articles.length).toBe(10)
                     articles.forEach((article)=>{
                         expect.objectContaining({
                             article_id: expect.any(Number),
@@ -71,7 +71,7 @@ describe("/api/articles",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
-                    expect(articles.length).toBe(13)
+                    expect(articles.length).toBe(10)
                     expect(articles).toBeSortedBy("created_at", {descending: true})
                 })
     })
@@ -81,7 +81,7 @@ describe("/api/articles",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
-                    expect(articles.length).toBe(13)
+                    expect(articles.length).toBe(10)
                     expect(articles).toBeSortedBy("title", {descending: true})
                 })
     })
@@ -91,13 +91,13 @@ describe("/api/articles",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
-                    expect(articles.length).toBe(13)
+                    expect(articles.length).toBe(10)
                     expect(articles).toBeSortedBy("created_at")
                 })
     })
     test("GET 200 and should be able to take multiple queries at once", () => {
         return request(app)
-            .get("/api/articles?sort_by=title&&order=asc&&topic=mitch")
+            .get("/api/articles?sort_by=title&&order=asc&&topic=mitch&&limit=15")
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
@@ -128,7 +128,7 @@ describe("/api/articles",()=>{
     })
     test("GET 200 and all articles of a topic (mitch) upon request", () => {
         return request(app)
-            .get("/api/articles?topic=mitch")
+            .get("/api/articles?topic=mitch&&limit=15")
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
@@ -156,6 +156,87 @@ describe("/api/articles",()=>{
                     expect(msg).toBe("Invalid query")
                 })
     })
+
+    test("GET 200 and should limit the articles to only 5", () => {
+        return request(app)
+            .get("/api/articles?limit=5")
+            .expect(200)
+                .then(({ body })=>{
+                    const { articles } = body
+                    expect(articles.length).toBe(5)
+                    articles.forEach((article)=>{
+                        expect.objectContaining({
+                            article_id: expect.any(Number),
+                            author: expect.any(String),
+                            title: expect.any(String),
+                            topic: expect.any(String),
+                            created_at: expect.any(String),
+                            votes: expect.any(Number),
+                            article_img_url: expect.any(String),
+                            comment_count: expect.any(String),
+                        })
+                    })
+        })
+    })
+
+    test("GET 200 and all the articles should be the same as the first 10", () => {
+        return request(app)
+            .get("/api/articles?p=1")
+            .expect(200)
+                .then(({ body })=>{
+                    const { articles } = body
+                    expect(articles.length).toBe(10)
+                    return articles
+                })
+                    .then((articles) => {
+                        return request(app)
+                        .get("/api/articles")
+                        .then(({ body }) => {
+                            const firstArticles = body.articles
+            
+                            expect(articles).toEqual(firstArticles)
+                        })
+                    })
+        })
+
+    test("GET 200 and all the articles should not be the first 3 but the first 3 on the second page", () => {
+        return request(app)
+            .get("/api/articles?p=2")
+            .expect(200)
+                .then(({ body })=>{
+                    const { articles } = body
+                    expect(articles.length).toBe(3)
+                    return articles
+                })
+                    .then((articles) => {
+                        return request(app)
+                        .get("/api/articles?limit=3")
+                        .then(({ body }) => {
+                            const firstArticles = body.articles
+            
+                            expect(articles).not.toEqual(firstArticles)
+                    })
+                })
+    })
+    test("GET 400 and err message when passed an invalid page number", () => {
+        return request(app)
+            .get("/api/articles?p=-1")
+            .expect(400)
+                .then(({ body })=>{
+                    const { msg } = body
+                    expect(msg).toBe("Invalid page number")
+                })
+    })
+    test("GET 400 and error message when passed a page that doesn't exist", () => {
+        return request(app)
+            .get("/api/articles?p=100")
+            .expect(404)
+                .then(({ body })=>{
+                    const { msg } = body
+                    expect(msg).toBe("There are no articles within this query")
+                })
+    })
+
     // POST
     test("POST 201 and the new article inserted and when not pasted a article_img_url gets a default",()=>{
         const newObject = {
@@ -199,7 +280,7 @@ describe("/api/articles",()=>{
             .expect(201)
                 .then(()=>{
                     return request(app)
-                    .get("/api/articles")
+                    .get("/api/articles?limit=15")
                     .expect(200)
                         .then(({ body })=>{
                             const { articles } = body
