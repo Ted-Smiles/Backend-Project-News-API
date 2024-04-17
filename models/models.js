@@ -17,18 +17,30 @@ exports.selectAllUser = () => {
     return db.query(queryStr)
 }
 
-exports.selectAllArticles = (topicQuery) => {
+exports.selectAllArticles = (query) => {
+    if(Object.keys(query).length > 0 && query.topic === undefined) {
+        return Promise.reject({status: 400, msg: 'Invalid query'})
+    }
+    const { topic } = query
+
     const queryValues = []
     let queryStr = `SELECT articles.article_id, articles.author, title, topic, articles.created_at, articles.votes, article_img_url, COUNT (comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id`
 
-    if (topicQuery) {
-        queryValues.push(topicQuery)
+    if (topic) {
+        queryValues.push(topic)
         queryStr += ` WHERE topic = $${queryValues.length}`
     }
 
     queryStr += ` GROUP BY articles.article_id`
 
     return db.query(queryStr, queryValues)
+    .then(({ rows }) => {
+        if (rows.length === 0) {
+            return Promise.reject({status: 404, msg: 'There are no articles within this query'})
+        } else {
+            return rows
+        }
+    })
 }
 
 exports.selectArticleById = (id) => {

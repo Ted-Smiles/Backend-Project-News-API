@@ -17,7 +17,7 @@ describe("/api",()=>{
         return request(app)
             .get("/api")
             .expect(200)
-                .then(({body})=>{
+                .then(({ body })=>{
                     const { requestedEndpoints } = body
                     expect(requestedEndpoints).toEqual(endpoints)
                 })
@@ -29,8 +29,8 @@ describe("/api/topics",()=>{
         return request(app)
             .get("/api/topics")
             .expect(200)
-                .then(({body})=>{
-                    const {topics} = body
+                .then(({ body })=>{
+                    const { topics } = body
                     expect(topics.length).toBe(3)
                     topics.forEach((topics)=>{
                         expect.objectContaining({
@@ -47,8 +47,8 @@ describe("/api/articles",()=>{
         return request(app)
             .get("/api/articles")
             .expect(200)
-                .then(({body})=>{
-                    const {articles} = body
+                .then(({ body })=>{
+                    const { articles } = body
                     expect(articles.length).toBe(13)
                     articles.forEach((article)=>{
                         expect.objectContaining({
@@ -68,8 +68,8 @@ describe("/api/articles",()=>{
         return request(app)
             .get("/api/articles?topic=mitch")
             .expect(200)
-                .then(({body})=>{
-                    const {articles} = body
+                .then(({ body })=>{
+                    const { articles } = body
                     expect(articles.length).toBe(12)
                     articles.forEach((article)=>{
                         expect(article.topic).toBe('mitch')
@@ -79,19 +79,19 @@ describe("/api/articles",()=>{
     test("GET 200 and no articles when passed a valid but non-existent topic", () => {
         return request(app)
             .get("/api/articles?topic=toby")
-            .expect(200)
-                .then(({body})=>{
-                    const {articles} = body
-                    expect(articles.length).toBe(0)
+            .expect(404)
+                .then(({ body })=>{
+                    const { msg } = body
+                    expect(msg).toBe("There are no articles within this query")
                 })
     })
     test("GET 200 and all articles when passed anything other than a topic (ignores invalid queries)", () => {
         return request(app)
             .get("/api/articles?test=testing")
-            .expect(200)
-                .then(({body})=>{
-                    const {articles} = body
-                    expect(articles.length).toBe(13)
+            .expect(400)
+                .then(({ body })=>{
+                    const { msg } = body
+                    expect(msg).toBe("Invalid query")
                 })
     })
 })
@@ -101,8 +101,8 @@ describe("/api/articles/:article_id",()=>{
         return request(app)
             .get("/api/articles/1")
             .expect(200)
-                .then(({body})=>{
-                    const {article} = body
+                .then(({ body })=>{
+                    const { article } = body
 
                     const desiredArticle =   {
                         title: "Living in the shadow of a great man",
@@ -122,8 +122,8 @@ describe("/api/articles/:article_id",()=>{
         return request(app)
             .get("/api/articles/100")
             .expect(404)
-                .then(({body})=>{
-                    const {msg} = body
+                .then(({ body })=>{
+                    const { msg } = body
                     expect(msg).toBe("article_id does not exist")
                 })
     })
@@ -131,8 +131,8 @@ describe("/api/articles/:article_id",()=>{
         return request(app)
             .get("/api/articles/banana")
             .expect(404)
-                .then(({body})=>{
-                    const {msg} = body
+                .then(({ body })=>{
+                    const { msg } = body
                     expect(msg).toBe("Invalid article_id")
                 })
     })
@@ -203,8 +203,8 @@ describe("/api/articles/:article_id",()=>{
         .patch("/api/articles/1")
         .send(newVote)
         .expect(400)
-        .then(({body})=>{
-            const {msg} = body
+        .then(({ body })=>{
+            const { msg } = body
             expect(msg).toBe("Invalid path params")
         })
     })
@@ -219,8 +219,8 @@ describe("/api/articles/:article_id",()=>{
         .patch("/api/articles/1")
         .send(newVote)
         .expect(400)
-        .then(({body})=>{
-            const {msg} = body
+        .then(({ body })=>{
+            const { msg } = body
             expect(msg).toBe("Invalid new entry")
         })
     })
@@ -236,8 +236,8 @@ describe("/api/articles/:article_id",()=>{
             .patch("/api/articles/100")
             .send(newVote)
             .expect(404)
-                .then(({body})=>{
-                    const {msg} = body
+                .then(({ body })=>{
+                    const { msg } = body
                     expect(msg).toBe("article_id does not exist")
                 })
     })
@@ -251,8 +251,8 @@ describe("/api/articles/:article_id",()=>{
             .patch("/api/articles/banana")
             .send(newVote)
             .expect(400)
-                .then(({body})=>{
-                    const {msg} = body
+                .then(({ body })=>{
+                    const { msg } = body
                     expect(msg).toBe("Invalid path params")
                 })
     })
@@ -264,8 +264,8 @@ describe("/api/articles/:article_id/comments",()=>{
         return request(app)
             .get("/api/articles/1/comments")
             .expect(200)
-                .then(({body})=>{
-                    const {comments} = body
+                .then(({ body })=>{
+                    const { comments } = body
                     expect(comments.length).toBe(11)
                     comments.forEach(comment => {
                         expect.objectContaining({
@@ -283,8 +283,8 @@ describe("/api/articles/:article_id/comments",()=>{
         return request(app)
             .get("/api/articles/7/comments")
             .expect(200)  // Not sure what status code to use as there is an article but no comments
-                .then(({body})=>{
-                    const {msg} = body
+                .then(({ body })=>{
+                    const { msg } = body
                     expect(msg).toBe("There are no comments on this article")
                 })
     })
@@ -292,8 +292,8 @@ describe("/api/articles/:article_id/comments",()=>{
         return request(app)
             .get("/api/articles/100/comments")
             .expect(404)
-                .then(({body})=>{
-                    const {msg} = body
+                .then(({ body })=>{
+                    const { msg } = body
                     expect(msg).toBe("article_id does not exist")
                 })
     })
@@ -301,8 +301,8 @@ describe("/api/articles/:article_id/comments",()=>{
         return request(app)
             .get("/api/articles/banana/comments")
             .expect(400)
-                .then(({body})=>{
-                    const {msg} = body
+                .then(({ body })=>{
+                    const { msg } = body
                     expect(msg).toBe("Invalid path params")
                 })
     })
@@ -321,8 +321,8 @@ describe("/api/articles/:article_id/comments",()=>{
         .post("/api/articles/1/comments")
         .send(newComment)
         .expect(201)
-        .then(({body})=>{
-            const {comment} = body
+        .then(({ body })=>{
+            const { comment } = body
             
             const finalComment = {
                 author: "butter_bridge",
@@ -346,8 +346,8 @@ describe("/api/articles/:article_id/comments",()=>{
         .post("/api/articles/1/comments")
         .send(newComment)
         .expect(201)
-        .then(({body})=>{
-            const {comment} = body
+        .then(({ body })=>{
+            const { comment } = body
             
             const finalComment = {
                 author: "butter_bridge",
@@ -369,8 +369,8 @@ describe("/api/articles/:article_id/comments",()=>{
             .post("/api/articles/100/comments")
             .send(newComment)
             .expect(404)
-                .then(({body})=>{
-                    const {msg} = body
+                .then(({ body })=>{
+                    const { msg } = body
                     expect(msg).toBe("article_id does not exist")
                 })
     })
@@ -385,8 +385,8 @@ describe("/api/articles/:article_id/comments",()=>{
             .post("/api/articles/banana/comments")
             .send(newComment)
             .expect(400)
-                .then(({body})=>{
-                    const {msg} = body
+                .then(({ body })=>{
+                    const { msg } = body
                     expect(msg).toBe("Invalid path params")
                 })
     })
@@ -402,8 +402,8 @@ describe("/api/articles/:article_id/comments",()=>{
             .post("/api/articles/1/comments")
             .send(newComment)
             .expect(404)
-                .then(({body})=>{
-                    const {msg} = body
+                .then(({ body })=>{
+                    const { msg } = body
                     expect(msg).toBe("Not a valid user")
                 })
     })
@@ -419,8 +419,8 @@ describe("/api/articles/:article_id/comments",()=>{
             .post("/api/articles/1/comments")
             .send(newComment)
             .expect(400)
-                .then(({body})=>{
-                    const {msg} = body
+                .then(({ body })=>{
+                    const { msg } = body
                     expect(msg).toBe("Invalid new entry")
                 })
     })
@@ -459,8 +459,8 @@ describe("/api/users",()=>{
         return request(app)
             .get("/api/users")
             .expect(200)
-                .then(({body})=>{
-                    const {users} = body
+                .then(({ body })=>{
+                    const { users } = body
                     expect(users.length).toBe(4)
                     users.forEach((user)=>{
                         expect.objectContaining({
@@ -479,7 +479,7 @@ describe("Invalid endpoint", () => {
         return request(app)
             .get("/not-a-real-path")
             .expect(404)
-                .then(({body})=>{
+                .then(({ body })=>{
                     const { msg } = body
                     expect(msg).toEqual('Path not found')
                 })
