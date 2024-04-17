@@ -156,6 +156,109 @@ describe("/api/articles",()=>{
                     expect(msg).toBe("Invalid query")
                 })
     })
+    // POST
+    test("POST 201 and the new article inserted and when not pasted a article_img_url gets a default",()=>{
+        const newObject = {
+            author: "butter_bridge",
+            title: "Am I a cat?",
+            body: "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+            topic: "mitch"
+        }
+
+        return request(app)
+            .post("/api/articles")
+            .send(newObject)
+            .expect(201)
+                .then(({ body })=>{
+                    const { article } = body
+
+                    const desiredArticle = {
+                        article_id: 14,
+                        title: 'Am I a cat?',
+                        topic: 'mitch',
+                        author: 'butter_bridge',
+                        body: 'Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?',
+                        votes: 0,
+                        article_img_url: 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700'
+                    }
+
+                    expect(article).toMatchObject(desiredArticle)
+                })
+    })
+    test("POST 201 and checks if there is a new article in the article table (14 articles after post)",()=>{
+        const newObject = {
+            author: "butter_bridge",
+            title: "Am I a cat?",
+            body: "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+            topic: "mitch"
+        }
+
+        return request(app)
+            .post("/api/articles")
+            .send(newObject)
+            .expect(201)
+                .then(()=>{
+                    return request(app)
+                    .get("/api/articles")
+                    .expect(200)
+                        .then(({ body })=>{
+                            const { articles } = body
+                            expect(articles.length).toBe(14)
+                        })
+                })
+    })
+    test("POST 400 and the message that the new article is invalid to insert",()=>{
+        const newObject = {
+            author: "butter_bridge",
+            title: "Am I a cat?",
+        }
+
+        return request(app)
+
+            .post("/api/articles")
+            .send(newObject)
+            .expect(400)
+                .then(({body})=>{
+                    const { msg } = body
+                    expect(msg).toEqual('Invalid new entry')
+                })
+    })
+    test("POST 404 and the message that the new article is invalid to insert as topic is foreign keys so need to be in found in the topic tables",()=>{
+        const newObject = {
+            author: "butter_bridge",
+            title: "Am I a cat?",
+            body: "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+            topic: "test"
+        }
+
+        return request(app)
+
+            .post("/api/articles")
+            .send(newObject)
+            .expect(404)
+                .then(({body})=>{
+                    const { msg } = body
+                    expect(msg).toEqual('topic does not exist')
+                })
+    })
+    test("POST 404 and the message that the new article is invalid to insert as author is foreign keys so need to be in found in the author tables",()=>{
+        const newObject = {
+            author: "test",
+            title: "Am I a cat?",
+            body: "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+            topic: "mitch"
+        }
+
+        return request(app)
+
+            .post("/api/articles")
+            .send(newObject)
+            .expect(404)
+                .then(({body})=>{
+                    const { msg } = body
+                    expect(msg).toEqual('author does not exist')
+                })
+    })
 })
 
 describe("/api/articles/:article_id",()=>{
