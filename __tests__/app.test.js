@@ -4,6 +4,7 @@ const db = require("../db/connection")
 const seed = require("../db/seeds/seed")
 const data = require("../db/data/test-data")
 const endpoints = require("../endpoints.json")
+require("jest-sorted")
 
 afterAll(()=>{
     db.end()
@@ -64,6 +65,67 @@ describe("/api/articles",()=>{
                     })
                 })
     })
+    test("GET 200 and all articles upon request sorted by created_at when passed no sort_by query", () => {
+        return request(app)
+            .get("/api/articles")
+            .expect(200)
+                .then(({ body })=>{
+                    const { articles } = body
+                    expect(articles.length).toBe(13)
+                    expect(articles).toBeSortedBy("created_at", {descending: true})
+                })
+    })
+    test("GET 200 and all articles sorted by the sort_by query upon request", () => {
+        return request(app)
+            .get("/api/articles?sort_by=title")
+            .expect(200)
+                .then(({ body })=>{
+                    const { articles } = body
+                    expect(articles.length).toBe(13)
+                    expect(articles).toBeSortedBy("title", {descending: true})
+                })
+    })
+    test("GET 200 and all articles order by ascending created_at upon request", () => {
+        return request(app)
+            .get("/api/articles?order=asc")
+            .expect(200)
+                .then(({ body })=>{
+                    const { articles } = body
+                    expect(articles.length).toBe(13)
+                    expect(articles).toBeSortedBy("created_at")
+                })
+    })
+    test("GET 200 and should be able to take multiple queries at once", () => {
+        return request(app)
+            .get("/api/articles?sort_by=title&&order=asc&&topic=mitch")
+            .expect(200)
+                .then(({ body })=>{
+                    const { articles } = body
+                    expect(articles.length).toBe(12)
+                    expect(articles).toBeSortedBy("title")
+                    articles.forEach((article)=>{
+                        expect(article.topic).toBe('mitch')
+                    })
+                })
+    })
+    test("GET 400 and no articles and an error message when passed a valid but non-existent sort_by category", () => {
+        return request(app)
+            .get("/api/articles?sort_by=toby")
+            .expect(400)
+                .then(({ body })=>{
+                    const { msg } = body
+                    expect(msg).toBe("Invalid sort query")
+                })
+    })
+    test("GET 400 and no articles and an error message when passed a valid but non-existent order category", () => {
+        return request(app)
+            .get("/api/articles?order=toby")
+            .expect(400)
+                .then(({ body })=>{
+                    const { msg } = body
+                    expect(msg).toBe("Invalid order query")
+                })
+    })
     test("GET 200 and all articles of a topic (mitch) upon request", () => {
         return request(app)
             .get("/api/articles?topic=mitch")
@@ -76,7 +138,7 @@ describe("/api/articles",()=>{
                     })
                 })
     })
-    test("GET 200 and no articles when passed a valid but non-existent topic", () => {
+    test("GET 404 and no articles when passed a valid but non-existent topic", () => {
         return request(app)
             .get("/api/articles?topic=toby")
             .expect(404)
@@ -85,7 +147,7 @@ describe("/api/articles",()=>{
                     expect(msg).toBe("There are no articles within this query")
                 })
     })
-    test("GET 200 and all articles when passed anything other than a topic (ignores invalid queries)", () => {
+    test("GET 400 and error message when passed an invalid query", () => {
         return request(app)
             .get("/api/articles?test=testing")
             .expect(400)
