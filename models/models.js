@@ -151,6 +151,22 @@ exports.updateArticleVotes = ({ inc_votes }, id) => {
     })
 }
 
+exports.updateNewArticle = (newArticle) => {
+    const { author, title, body, topic, article_img_url = 'https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700' } = newArticle
+
+    return db.query(`
+    INSERT INTO articles
+        (author, title, body, topic, article_img_url)
+    VALUES
+        ($1, $2, $3, $4, $5)
+    RETURNING *
+    `, [author, title, body, topic, article_img_url])
+
+    .then(({ rows }) => {
+        return rows[0]
+    })
+}
+
 exports.updateCommentVotes = ({ inc_votes }, id) => {
     return db.query(`UPDATE comments SET votes = votes + $1 WHERE comment_id = $2 RETURNING *`,[inc_votes, id])
     .then(({ rows }) => {

@@ -9,7 +9,8 @@ const {
     deleteCommentById,
     selectAllUser,
     selectUserByUsername,
-    updateCommentVotes } = require("../models/models")
+    updateCommentVotes,
+    updateNewArticle } = require("../models/models")
 
 exports.getAllEndpoints = (req, res, next) => {
     const endpoints = selectAllEndpoints()
@@ -90,7 +91,7 @@ exports.postNewComment = (req, res, next) => {
     const { article_id } = req.params
     updateNewComment(newComment, article_id)
     .then((comment) => {
-        res.status(201).send({comment})
+        res.status(201).send({ comment })
     })
     .catch((err) => {
         next(err)
@@ -103,6 +104,17 @@ exports.patchArticle = (req, res, next) => {
     updateArticleVotes(newVote, article_id)
     .then((article) => {
         res.status(200).send({ article })
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+exports.postNewArticle = (req, res, next) => {
+    const newArticle = req.body
+    updateNewArticle(newArticle)
+    .then((article) => {
+        res.status(201).send({ article })
     })
     .catch((err) => {
         next(err)
