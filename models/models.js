@@ -18,10 +18,31 @@ exports.selectAllUser = () => {
 }
 
 exports.selectAllArticles = (query) => {
-    if(Object.keys(query).length > 0 && query.topic === undefined) {
+    const allowedKeys = ['topic', 'sort_by', 'order']
+
+    let validQuery = false
+
+    Object.keys(query).forEach(key => {
+        if(allowedKeys.includes(key)) {
+            validQuery = true
+        }
+    })
+    
+    if(!validQuery && Object.keys(query).length > 0) {
         return Promise.reject({status: 400, msg: 'Invalid query'})
     }
+
     const { topic } = query
+    const { sort_by = 'created_at' } = query
+    const { order = 'DESC' } = query
+
+    if(!['ASC', 'DESC'].includes(order.toUpperCase())) {
+        return Promise.reject({status: 400, msg: 'Invalid order query'})
+    }
+
+    if(!['title', 'topic', 'author', 'body', 'created_at', 'article_img_url'].includes(sort_by)) {
+        return Promise.reject({status: 400, msg: 'Invalid sort query'})
+    }
 
     const queryValues = []
     let queryStr = `SELECT articles.article_id, articles.author, title, topic, articles.created_at, articles.votes, article_img_url, COUNT (comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id`
@@ -32,6 +53,8 @@ exports.selectAllArticles = (query) => {
     }
 
     queryStr += ` GROUP BY articles.article_id`
+    
+    queryStr += ` ORDER BY articles.${sort_by} ${order.toUpperCase()}`
 
     return db.query(queryStr, queryValues)
     .then(({ rows }) => {
