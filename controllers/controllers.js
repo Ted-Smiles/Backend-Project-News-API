@@ -7,7 +7,8 @@ const {
     updateNewComment, 
     updateArticleVotes, 
     deleteCommentById,
-    selectAllUser } = require("../models/models")
+    selectAllUser,
+    selectUserByUsername } = require("../models/models")
 
 exports.getAllEndpoints = (req, res, next) => {
     const endpoints = selectAllEndpoints()
@@ -30,6 +31,17 @@ exports.getAllUsers = (req, res, next) => {
     .then(({ rows }) => {
         const users = rows
         res.status(200).send({ users })
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+exports.getUserByUsername = (req, res, next) => {
+    const { username } = req.params
+    selectUserByUsername(username)
+    .then(( user ) => {
+        res.status(200).send({ user })
     })
     .catch((err) => {
         next(err)

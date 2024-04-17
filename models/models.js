@@ -17,6 +17,25 @@ exports.selectAllUser = () => {
     return db.query(queryStr)
 }
 
+exports.selectUserByUsername = (username) => {
+    const queryValues = []
+    let queryStr = `SELECT * FROM users`
+
+    if (username) {
+        queryValues.push(username)
+        queryStr += ` WHERE username = $${queryValues.length}`
+    }
+
+    return db.query(queryStr, queryValues)
+    .then(({ rows }) => {
+        if (rows.length === 0) {
+            return Promise.reject({status: 404, msg: 'Username does not exist'})
+        } else {
+            return rows[0]
+        }
+    })
+}
+
 exports.selectAllArticles = (query) => {
     const allowedKeys = ['topic', 'sort_by', 'order']
 

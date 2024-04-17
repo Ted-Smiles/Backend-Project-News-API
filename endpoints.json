@@ -10,8 +10,15 @@
     }
   },
   "GET /api/users": {
-    "description": "serves an array of all topics",
+    "description": "serves an array of all users",
     "queries": [],
+    "exampleResponse": {
+      "users": [{ "username": "butter_bridge", "name": "jonny", "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg" }]
+    }
+  },
+  "GET /api/users/:username": {
+    "description": "sserves the requested user",
+    "queries": ["username"],
     "exampleResponse": {
       "users": [{ "username": "butter_bridge", "name": "jonny", "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg" }]
     }
@@ -34,7 +41,7 @@
     }
   }, 
   "GET /api/articles/:article_id": {
-    "description": "serves an array of the requested article",
+    "description": "serves the requested article",
     "queries": ["article_id"],
     "exampleResponse": {
       "article": [
@@ -47,6 +54,24 @@
           "votes": 100,
           "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           "comment_count": 6
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "updates the votes by an increment passed in",
+    "queries": ["article_id"],
+    "sentBody": { "inc_votes": 100},
+    "exampleResponse": {
+      "article": [
+        {
+          "title": "Living in the shadow of a great man",
+          "topic": "mitch",
+          "author": "butter_bridge",
+          "body": "I find this existence challenging",
+          "created_at": "2020-07-09T20:11:00.000Z",
+          "votes": 200,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
       ]
     }
@@ -77,24 +102,6 @@
           "author": "butter_bridge",
           "body": "This is a test comment",
           "article_id": 1
-        }
-      ]
-    }
-  },
-  "PATCH /api/articles/:article_id": {
-    "description": "updates the votes by an increment passed in",
-    "queries": ["article_id"],
-    "sentBody": { "inc_votes": 100},
-    "exampleResponse": {
-      "article": [
-        {
-          "title": "Living in the shadow of a great man",
-          "topic": "mitch",
-          "author": "butter_bridge",
-          "body": "I find this existence challenging",
-          "created_at": "2020-07-09T20:11:00.000Z",
-          "votes": 200,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
       ]
     }

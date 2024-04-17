@@ -533,6 +533,32 @@ describe("/api/users",()=>{
                     })
                 })
     })
+
+    test("GET 200 and the specific user upon request", () => {
+        return request(app)
+            .get("/api/users/butter_bridge")
+            .expect(200)
+                .then(({ body })=>{
+                    const { user } = body
+
+                    const desiredUser =   {
+                        username: "butter_bridge",
+                        avatar_url: "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg",
+                        name: "jonny",
+                    }
+
+                    expect(user).toMatchObject(desiredUser)
+                })
+    })
+    test("GET 404 when given a valid but non-existent username",()=>{
+        return request(app)
+            .get("/api/users/banana")
+            .expect(404)
+                .then(({ body })=>{
+                    const { msg } = body
+                    expect(msg).toBe("Username does not exist")
+                })
+    })
 })
 
 
