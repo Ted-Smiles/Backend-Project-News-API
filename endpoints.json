@@ -106,6 +106,22 @@
       ]
     }
   },
+  "PATCH /api/comments/:comment_id": {
+    "description": "updates the votes by an increment passed in",
+    "queries": ["comment_id"],
+    "sentBody": { "inc_votes": 100},
+    "exampleResponse": {
+      "comment": [
+        {
+          "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+          "votes": 200,
+          "author": "icellusedkars",
+          "article_id": 1,
+          "created_at": "2020-03-01T01:13:00.000Z"
+        }
+      ]
+    }
+  },
   "DELETE /api/comments/:comment_id" : {
     "description": "deletes a request comment and responds with a 204",
     "queries": ["comment_id"]
