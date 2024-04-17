@@ -37,7 +37,7 @@ exports.selectUserByUsername = (username) => {
 }
 
 exports.selectAllArticles = (query) => {
-    const allowedKeys = ['topic', 'sort_by', 'order']
+    const allowedKeys = ['topic', 'sort_by', 'order', 'limit', 'p']
 
     let validQuery = false
 
@@ -54,6 +54,8 @@ exports.selectAllArticles = (query) => {
     const { topic } = query
     const { sort_by = 'created_at' } = query
     const { order = 'DESC' } = query
+    const { limit = 10 } = query
+    const { p: page = 1 }  = query
 
     if(!['ASC', 'DESC'].includes(order.toUpperCase())) {
         return Promise.reject({status: 400, msg: 'Invalid order query'})
@@ -73,7 +75,14 @@ exports.selectAllArticles = (query) => {
 
     queryStr += ` GROUP BY articles.article_id`
     
-    queryStr += ` ORDER BY articles.${sort_by} ${order.toUpperCase()}`
+    queryStr += ` ORDER BY articles.${sort_by} ${order.toUpperCase()} LIMIT ${limit}`
+
+    let offset = (page - 1) * 10
+    if(offset < 0) {
+        return Promise.reject({status: 400, msg: 'Invalid page number'})
+    }
+
+    queryStr += ` OFFSET ${offset}`
 
     return db.query(queryStr, queryValues)
     .then(({ rows }) => {
