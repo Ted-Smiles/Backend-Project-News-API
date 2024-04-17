@@ -32,9 +32,11 @@ exports.selectAllArticles = (topicQuery) => {
 }
 
 exports.selectArticleById = (id) => {
-    let queryStr = `SELECT * FROM articles`
+    let queryStr = `SELECT articles.article_id, articles.author, title, articles.body, topic, articles.created_at, articles.votes, article_img_url, COUNT (comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id`
 
-    queryStr += ` WHERE article_id = ${id}`
+    queryStr += ` WHERE articles.article_id = ${id}`
+
+    queryStr += ` GROUP BY articles.article_id`
 
     return db.query(queryStr)
     .then(({ rows }) => {
