@@ -17,7 +17,7 @@
     }
   },
   "GET /api/users/:username": {
-    "description": "sserves the requested user",
+    "description": "serves the requested user",
     "queries": ["username"],
     "exampleResponse": {
       "users": [{ "username": "butter_bridge", "name": "jonny", "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg" }]
@@ -36,6 +36,27 @@
           "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
           "comment_count": 6
+        }
+      ]
+    }
+  }, 
+  "POST /api/articles": {
+    "description": "adds a new article to the articles table",
+    "sentBody": { 
+        "author": "butter_bridge",
+        "title": "Am I a cat?",
+        "body": "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+        "topic": "mitch",
+        "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
+      },
+    "exampleResponse": {
+      "article": [
+        {
+          "author": "butter_bridge",
+          "title": "Am I a cat?",
+          "body": "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+          "topic": "mitch",
+          "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700"
         }
       ]
     }
