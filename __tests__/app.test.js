@@ -233,7 +233,7 @@ describe("/api/articles",()=>{
             .expect(404)
                 .then(({ body })=>{
                     const { msg } = body
-                    expect(msg).toBe("There are no articles within this query")
+                    expect(msg).toBe("There are no articles on this page")
                 })
     })
 
@@ -512,7 +512,7 @@ describe("/api/articles/:article_id/comments",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { comments } = body
-                    expect(comments.length).toBe(11)
+                    expect(comments.length).toBe(10)
                     comments.forEach(comment => {
                         expect.objectContaining({
                             comment_id: expect.any(Number),
@@ -550,6 +550,84 @@ describe("/api/articles/:article_id/comments",()=>{
                 .then(({ body })=>{
                     const { msg } = body
                     expect(msg).toBe("Invalid path params")
+                })
+    })
+
+    test("GET 200 and should limit the comments to only 5", () => {
+        return request(app)
+            .get("/api/articles/1/comments?limit=5")
+            .expect(200)
+                .then(({ body })=>{
+                    const { comments } = body
+                    expect(comments.length).toBe(5)
+                    comments.forEach(comment => {
+                        expect.objectContaining({
+                            comment_id: expect.any(Number),
+                            votes: expect.any(Number),
+                            created_at: expect.any(String),
+                            author: expect.any(String),
+                            body: expect.any(String),
+                            article_id: expect.any(Number),
+                        })
+                    })
+        })
+    })
+
+    test("GET 200 and all the comments should be the same as the first 10", () => {
+        return request(app)
+            .get("/api/articles/1/comments?p=1")
+            .expect(200)
+                .then(({ body })=>{
+                    const { comments } = body
+                    expect(comments.length).toBe(10)
+                    return comments
+                })
+                    .then((comments) => {
+                        return request(app)
+                        .get("/api/articles/1/comments")
+                        .then(({ body }) => {
+                            const firstComments = body.comments
+            
+                            expect(comments).toEqual(firstComments)
+                        })
+                    })
+        })
+
+    test("GET 200 and all the comments should not be the first 1 but the first 1 on the second page", () => {
+        return request(app)
+            .get("/api/articles/1/comments?p=2")
+            .expect(200)
+                .then(({ body })=>{
+                    const { comments } = body
+                    expect(comments.length).toBe(1)
+                    return comments
+                })
+                    .then((comments) => {
+                        return request(app)
+                        .get("/api/articles/1/comments?limit=1")
+                        .then(({ body }) => {
+                            const firstComments = body.comments
+            
+                            expect(comments).not.toEqual(firstComments)
+                    })
+                })
+    })
+    test("GET 400 and err message when passed an invalid page number", () => {
+        return request(app)
+            .get("/api/articles/1/comments?p=-1")
+            .expect(400)
+                .then(({ body })=>{
+                    const { msg } = body
+                    expect(msg).toBe("Invalid page number")
+                })
+    })
+    test("GET 400 and error message when passed a page that doesn't exist", () => {
+        return request(app)
+            .get("/api/articles/1/comments?p=100")
+            .expect(404)
+                .then(({ body })=>{
+                    const { msg } = body
+                    expect(msg).toBe("There are no comments on this page")
                 })
     })
 

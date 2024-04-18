@@ -98,8 +98,8 @@
     }
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "serves an array of the comments on the requested article",
-    "queries": ["article_id"],
+    "description": "serves an array of differnet pages of 10 comments on the requested article",
+    "queries": ["article_id", "limit",  "p"],
     "exampleResponse": {
       "comment": [
         {

@@ -86,7 +86,9 @@ exports.selectAllArticles = (query) => {
 
     return db.query(queryStr, queryValues)
     .then(({ rows }) => {
-        if (rows.length === 0) {
+        if (rows.length === 0 && page > 1) {
+            return Promise.reject({ status: 404, msg: 'There are no articles on this page' });
+        } else if (rows.length === 0) {
             return Promise.reject({status: 404, msg: 'There are no articles within this query'})
         } else {
             return rows
@@ -111,19 +113,49 @@ exports.selectArticleById = (id) => {
     })
 }
 
-exports.selectAllCommentsFromArticleId = (id) => {
+exports.selectAllCommentsFromArticleId = (query, id) => {
+    const allowedKeys = ['limit', 'p']
+
+    let validQuery = false
+
+    Object.keys(query).forEach(key => {
+        if(allowedKeys.includes(key)) {
+            validQuery = true
+        }
+    })
+    
+    if(!validQuery && Object.keys(query).length > 0) {
+        return Promise.reject({status: 400, msg: 'Invalid query'})
+    }
+
+    let { limit = 10 } = query
+    const { p: page = 1 }  = query
+
     let queryStr = `SELECT * FROM comments`
 
     queryStr += ` WHERE article_id = $1`
 
+        
+    queryStr += ` LIMIT ${limit}`
+
+    let offset = (page - 1) * 10
+    if(offset < 0) {
+        return Promise.reject({status: 400, msg: 'Invalid page number'})
+    }
+
+    queryStr += ` OFFSET ${offset}`
+
     const promise1 =  db.query(queryStr, [id])
     const promise2  =  this.selectArticleById(id)
+
 
     return Promise.all([promise1, promise2])
     .then(([{ rows }, article]) => {
         if (rows.length === 0) { 
             if (article.length === 0) {
                 return Promise.reject({ status: 404, msg: 'article_id does not exist' });
+            } else if (page > 1) {
+                return Promise.reject({ status: 404, msg: 'There are no comments on this page' });
             } else {
                 return Promise.reject({ status: 200, msg: 'There are no comments on this article'})
             }
