@@ -11,6 +11,26 @@ exports.selectAllTopics = () => {
     return db.query(queryStr)
 }
 
+exports.updateNewTopic = (newTopic) => {
+    const { slug, description } = newTopic
+
+    if (!slug || !description) {
+        return Promise.reject({status: 400, msg: 'Invalid new entry'})
+    }
+
+    return db.query(`
+        INSERT INTO topics
+            (slug, description)
+        VALUES
+            ($1, $2)
+        RETURNING *
+        `, [slug, description])
+    
+    .then(({ rows }) => {
+        return rows[0]
+    })
+}
+
 exports.selectAllUser = () => {
     let queryStr = `SELECT * FROM users`
 
