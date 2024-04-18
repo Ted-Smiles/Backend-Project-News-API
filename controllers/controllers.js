@@ -11,7 +11,8 @@ const {
     selectUserByUsername,
     updateCommentVotes,
     updateNewArticle,
-    updateNewTopic } = require("../models/models")
+    updateNewTopic,
+    deleteArticlesById } = require("../models/models")
 
 exports.getAllEndpoints = (req, res, next) => {
     const endpoints = selectAllEndpoints()
@@ -128,6 +129,17 @@ exports.postNewArticle = (req, res, next) => {
     updateNewArticle(newArticle)
     .then((article) => {
         res.status(201).send({ article })
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+exports.deleteArticle = (req, res, next) => {
+    const { article_id } = req.params
+    deleteArticlesById(article_id)
+    .then(() => {
+        res.status(204).send()
     })
     .catch((err) => {
         next(err)
