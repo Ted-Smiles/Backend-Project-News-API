@@ -809,7 +809,6 @@ describe("/api/articles/:article_id/comments",()=>{
 
 })
 
-
 describe("/api/comments/:comment_id",()=>{ 
     // PATCH
     test("PATCH 200 should increase votes of the specific comment and return the comment", () => {
