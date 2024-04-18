@@ -108,6 +108,10 @@
         }
     }
   },
+  "DELETE /api/articles/:article_id": {
+    "description": "deletes a request article and all its comments and responds with a 204",
+    "queries": ["article_id"]
+  },
   "GET /api/articles/:article_id/comments": {
     "description": "serves an array of differnet pages of 10 comments on the requested article",
     "queries": ["article_id", "limit",  "p"],

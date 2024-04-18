@@ -560,6 +560,58 @@ describe("/api/articles/:article_id",()=>{
                     expect(msg).toBe("Invalid path params")
                 })
     })
+
+    // DELETE
+    test("DELETE 204, delete the article from the article_id", () => {
+        return request(app)
+        .delete("/api/articles/1")
+        .expect(204)
+        .then(()=> {
+            return request(app)
+                .get("/api/articles?limit=15")
+                .expect(200)
+                    .then(({ body })=>{
+                        const { articles } = body
+                        expect(articles.length).toBe(12)
+                    })
+        })
+    })
+    test("DELETE 204, when article deleted, all it comments are deleted", () => {
+        return request(app)
+        .delete("/api/articles/1")
+        .expect(204)
+        .then(()=> {
+            const newVote = {
+                inc_votes: 100
+            }
+            return request(app)
+                .patch("/api/comments/2")
+                .send(newVote)
+                .expect(404)
+                .then(({ body })=>{
+                    const { msg } = body
+                    expect(msg).toBe("comment_id does not exist")
+                })
+        })
+    })
+    test("DELETE 404 when given an valid but non-existent article_id", () => {
+        return request(app)
+        .delete("/api/articles/100")
+        .expect(404)
+        .then(({ body })=>{
+            const { msg } = body
+            expect(msg).toBe("article_id does not exist")
+        })
+    })
+    test("DELETE 400 when given an invalid article_id", () => {
+        return request(app)
+        .delete("/api/articles/banana")
+        .expect(400)
+        .then(({ body })=>{
+            const { msg } = body
+            expect(msg).toBe("Invalid path params")
+        })
+    })
 })
 
 describe("/api/articles/:article_id/comments",()=>{
