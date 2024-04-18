@@ -86,7 +86,17 @@ exports.selectAllArticles = (query) => {
     }
 
     const queryValues = []
-    let queryStr = `SELECT articles.article_id, articles.author, title, topic, articles.created_at, articles.votes, article_img_url, COUNT (comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id`
+    let queryStr = `SELECT 
+        articles.article_id, 
+        articles.author, 
+        title, 
+        topic, 
+        articles.created_at, 
+        articles.votes, 
+        article_img_url, 
+        COUNT (comments.comment_id) AS comment_count,
+        COUNT(*) OVER() AS total_count
+    FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id`
 
     if (topic) {
         queryValues.push(topic)
@@ -105,19 +115,31 @@ exports.selectAllArticles = (query) => {
     queryStr += ` OFFSET ${offset}`
 
     return db.query(queryStr, queryValues)
+
     .then(({ rows }) => {
         if (rows.length === 0 && page > 1) {
             return Promise.reject({ status: 404, msg: 'There are no articles on this page' });
         } else if (rows.length === 0) {
             return Promise.reject({status: 404, msg: 'There are no articles within this query'})
         } else {
-            return rows
+            const total_count = Number(rows[0].total_count)
+            return { rows, total_count }
         }
     })
 }
 
 exports.selectArticleById = (id) => {
-    let queryStr = `SELECT articles.article_id, articles.author, title, articles.body, topic, articles.created_at, articles.votes, article_img_url, COUNT (comments.comment_id) AS comment_count FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id`
+    let queryStr = `SELECT 
+        articles.article_id, 
+        articles.author, 
+        title, 
+        articles.body, 
+        topic, 
+        articles.created_at, 
+        articles.votes, 
+        article_img_url, 
+        COUNT (comments.comment_id) AS comment_count 
+    FROM articles LEFT JOIN comments ON comments.article_id = articles.article_id`
 
     queryStr += ` WHERE articles.article_id = ${id}`
 
@@ -151,7 +173,14 @@ exports.selectAllCommentsFromArticleId = (query, id) => {
     let { limit = 10 } = query
     const { p: page = 1 }  = query
 
-    let queryStr = `SELECT * FROM comments`
+    let queryStr = `SELECT 
+        body,
+        votes, 
+        author,  
+        article_id, 
+        created_at, 
+        COUNT(*) OVER() AS total_count
+    FROM comments`
 
     queryStr += ` WHERE article_id = $1`
 
@@ -180,7 +209,8 @@ exports.selectAllCommentsFromArticleId = (query, id) => {
                 return Promise.reject({ status: 200, msg: 'There are no comments on this article'})
             }
         } else {
-            return rows
+            const total_count = Number(rows[0].total_count)
+            return { rows, total_count }
         }
     })
 }

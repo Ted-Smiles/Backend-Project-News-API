@@ -66,8 +66,10 @@ exports.getUserByUsername = (req, res, next) => {
 exports.getAllArticles = (req, res, next) => {
     const query = req.query
     selectAllArticles(query)
-    .then(( articles ) => {
-        res.status(200).send({ articles })
+    .then(( object ) => {
+        const { rows: articles }  = object
+        const { total_count }  = object
+        res.status(200).send({ articles, total_count })
     })
     .catch((err) => {
         next(err)
@@ -92,8 +94,10 @@ exports.getAllCommentsFromArticleId = (req, res, next) => {
     const query = req.query
     const { article_id } = req.params
     selectAllCommentsFromArticleId(query, article_id)
-    .then (( comments ) => {
-        res.status(200).send({comments})
+    .then (( object ) => {
+        const { rows: comments }  = object
+        const { total_count }  = object
+        res.status(200).send({comments, total_count})
     })
     .catch((err) => {
         next(err)

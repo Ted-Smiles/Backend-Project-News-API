@@ -19,7 +19,6 @@ app.use((req, res, next) => {
 })
 
 app.use((err, req, res, next) => {
-
     if (err.code === '23502') {
         err = {status: 400, msg: 'Invalid new entry'}
     } else if (err.code === '23503' && err.constraint === 'comments_author_fkey') {

@@ -108,7 +108,9 @@ describe("/api/articles",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
+                    const { total_count } = body
                     expect(articles.length).toBe(10)
+                    expect(total_count).toBe(13)
                     articles.forEach((article)=>{
                         expect.objectContaining({
                             article_id: expect.any(Number),
@@ -155,11 +157,13 @@ describe("/api/articles",()=>{
     })
     test("GET 200 and should be able to take multiple queries at once", () => {
         return request(app)
-            .get("/api/articles?sort_by=title&&order=asc&&topic=mitch&&limit=15")
+            .get("/api/articles?sort_by=title&&order=asc&&topic=mitch")
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
-                    expect(articles.length).toBe(12)
+                    const { total_count } = body
+                    expect(articles.length).toBe(10)
+                    expect(total_count).toBe(12)
                     expect(articles).toBeSortedBy("title")
                     articles.forEach((article)=>{
                         expect(article.topic).toBe('mitch')
@@ -186,11 +190,13 @@ describe("/api/articles",()=>{
     })
     test("GET 200 and all articles of a topic (mitch) upon request", () => {
         return request(app)
-            .get("/api/articles?topic=mitch&&limit=15")
+            .get("/api/articles?topic=mitch")
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
-                    expect(articles.length).toBe(12)
+                    const { total_count } = body
+                    expect(articles.length).toBe(10)
+                    expect(total_count).toBe(12)
                     articles.forEach((article)=>{
                         expect(article.topic).toBe('mitch')
                     })
@@ -221,7 +227,9 @@ describe("/api/articles",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
+                    const { total_count } = body
                     expect(articles.length).toBe(5)
+                    expect(total_count).toBe(13)
                     articles.forEach((article)=>{
                         expect.objectContaining({
                             article_id: expect.any(Number),
@@ -243,7 +251,9 @@ describe("/api/articles",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
+                    const { total_count } = body
                     expect(articles.length).toBe(10)
+                    expect(total_count).toBe(13)
                     return articles
                 })
                     .then((articles) => {
@@ -263,7 +273,9 @@ describe("/api/articles",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
+                    const { total_count } = body
                     expect(articles.length).toBe(3)
+                    expect(total_count).toBe(13)
                     return articles
                 })
                     .then((articles) => {
@@ -622,7 +634,9 @@ describe("/api/articles/:article_id/comments",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { comments } = body
+                    const { total_count } = body
                     expect(comments.length).toBe(10)
+                    expect(total_count).toBe(11)
                     comments.forEach(comment => {
                         expect.objectContaining({
                             comment_id: expect.any(Number),
@@ -669,7 +683,9 @@ describe("/api/articles/:article_id/comments",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { comments } = body
+                    const { total_count } = body
                     expect(comments.length).toBe(5)
+                    expect(total_count).toBe(11)
                     comments.forEach(comment => {
                         expect.objectContaining({
                             comment_id: expect.any(Number),
@@ -689,7 +705,9 @@ describe("/api/articles/:article_id/comments",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { comments } = body
+                    const { total_count } = body
                     expect(comments.length).toBe(10)
+                    expect(total_count).toBe(11)
                     return comments
                 })
                     .then((comments) => {
@@ -709,7 +727,9 @@ describe("/api/articles/:article_id/comments",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { comments } = body
+                    const { total_count } = body
                     expect(comments.length).toBe(1)
+                    expect(total_count).toBe(11)
                     return comments
                 })
                     .then((comments) => {
