@@ -41,6 +41,64 @@ describe("/api/topics",()=>{
                     })
                 })
     })
+
+    // POST
+    test("POST 201 and the new topics inserted",()=>{
+        const newObject = {
+            slug: "bob",
+            description: "Some decription"
+        }
+
+        return request(app)
+            .post("/api/topics")
+            .send(newObject)
+            .expect(201)
+                .then(({ body })=>{
+                    const { topic } = body
+
+                    const desiredTopic = {
+                        slug: "bob",
+                        description: "Some decription"
+                    }
+
+                    expect(topic).toMatchObject(desiredTopic)
+                })
+    })
+    test("POST 201 and checks if there is a new topic in the topics table (4 topics after post)",()=>{
+        const newObject = {
+            slug: "bob",
+            description: "Some decription"
+        }
+
+        return request(app)
+            .post("/api/topics")
+            .send(newObject)
+            .expect(201)
+                .then(()=>{
+                    return request(app)
+                    .get("/api/topics")
+                    .expect(200)
+                        .then(({ body })=>{
+                            const { topics } = body
+                            expect(topics.length).toBe(4)
+                        })
+                })
+    })
+    test("POST 400 and the message that the new topic is invalid to insert",()=>{
+        const newObject = {
+            slug: "bob"
+        }
+
+        return request(app)
+
+            .post("/api/topics")
+            .send(newObject)
+            .expect(400)
+                .then(({body})=>{
+                    const { msg } = body
+                    expect(msg).toEqual('Invalid new entry')
+                })
+    })
 })
 
 describe("/api/articles",()=>{

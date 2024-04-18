@@ -10,7 +10,8 @@ const {
     selectAllUser,
     selectUserByUsername,
     updateCommentVotes,
-    updateNewArticle } = require("../models/models")
+    updateNewArticle,
+    updateNewTopic } = require("../models/models")
 
 exports.getAllEndpoints = (req, res, next) => {
     const endpoints = selectAllEndpoints()
@@ -22,6 +23,17 @@ exports.getAllTopics = (req, res, next) => {
     .then(({ rows }) => {
         const topics = rows
         res.status(200).send({ topics })
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+exports.postNewTopic = (req, res, next) => {
+    const newtopic = req.body
+    updateNewTopic(newtopic)
+    .then((topic) => {
+        res.status(201).send({ topic })
     })
     .catch((err) => {
         next(err)
