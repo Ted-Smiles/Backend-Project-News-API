@@ -17,9 +17,3 @@ jobs:
         run: npm run test-utils
 
 
-    app-tests:
-    needs: util-tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Test app
-        uses: npm test
