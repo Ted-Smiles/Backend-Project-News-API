@@ -38,4 +38,4 @@ jobs:
         - name: Test
           run: echo 'curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}'
         - name: Deploy to Render
-          run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }} echo 'curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}'
+          run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
