@@ -5,26 +5,26 @@ on:
     branches:
       - main
 jobs:
-  Explore-GitHub-Actions:
+  Greeting:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout Repo
-      uses: actions/checkout@v3
+      - name: Say hello
+      uses: eacho 'Hello there'
 
-      - name: Use Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 18
-
-      - name: Use PostgreSQL
-        uses: harmon758/postgresql-action@v1
-        with:
-          postgresql db: 'my_db'
-          postgresql user: 'test_user'
-          postgresql password: 'test_password'
-
+   util-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout and clone
+        uses: actions/checkout@v4.1.1
       - name: Install dependencies
         run: npm ci
+      _ name: Test utils
+        run: npm run test-utils
 
-      - name: Run tests
-        run: PGDATABASE=nc_news_test PGUSER=test_user PGPASSWORD=test_password npm t
+
+    app-tests:
+    needs: util-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test app
+        uses: npm test
