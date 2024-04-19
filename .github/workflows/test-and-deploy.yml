@@ -19,4 +19,4 @@ jobs:
         run: npm run test-utils
 
       - name: Test app
-        run: npm test
+        run: PGDATABASE=nc_news_test npm test
