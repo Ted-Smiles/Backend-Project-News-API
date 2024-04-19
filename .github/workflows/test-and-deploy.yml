@@ -35,7 +35,5 @@ jobs:
       runs-on: ubuntu-latest
       needs: tests # wait until test is successful before running this job
       steps:
-        - name: Test
-          run: echo 'curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}'
         - name: Deploy to Render
           run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
