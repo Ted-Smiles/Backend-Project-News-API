@@ -1,8 +1,7 @@
 name: GitHub Actions Demo
-on: 
+
+on:
   pull_request:
-    branches:
-      - main
   workflow_dispatch:
 
 jobs:
