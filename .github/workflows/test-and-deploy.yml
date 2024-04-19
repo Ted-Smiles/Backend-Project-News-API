@@ -25,6 +25,12 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Setup databases
+        run: npm run setup-dbs
+
+      - name: Seed database
+        run: npm run seed
+
       - name: Test utils
         run: npm run test-utils
 
