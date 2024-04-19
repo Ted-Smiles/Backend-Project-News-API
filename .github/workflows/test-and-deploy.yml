@@ -37,3 +37,4 @@ jobs:
       steps:
         - name: Deploy to Render
           run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+          run: echo 'curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}'
