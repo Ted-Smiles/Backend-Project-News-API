@@ -431,6 +431,7 @@ describe("/api/articles/:article_id",()=>{
                     }
 
                     expect(article).toMatchObject(desiredArticle)
+                    expect(typeof article.created_at).toBe("string")
                 })
     })
     test("GET 404 when given a valid but non-existent article_id",()=>{
@@ -477,6 +478,7 @@ describe("/api/articles/:article_id",()=>{
                 }
 
                 expect(article).toMatchObject(desiredArticle)
+                expect(typeof article.created_at).toBe("string")
             })
     })
 
@@ -503,6 +505,7 @@ describe("/api/articles/:article_id",()=>{
                 }
 
                 expect(article).toMatchObject(desiredArticle)
+                expect(typeof article.created_at).toBe("string")
             })
     })
 
