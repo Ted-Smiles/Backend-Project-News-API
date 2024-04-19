@@ -105,6 +105,9 @@ exports.selectAllArticles = (query) => {
             return Promise.reject({status: 404, msg: 'There are no articles within this query'})
         } else {
             const total_count = Number(rows[0].total_count)
+            rows.forEach(row => {
+                delete row.total_count
+            });
             return { rows, total_count }
         }
     })
