@@ -8,7 +8,6 @@ on:
 jobs:
   tests:
     runs-on: ubuntu-latest
-    if: ${{ github.event_name == 'pull_request' }}
     steps:
       - name: Checkout and clone
         uses: actions/checkout@v4.1.1
@@ -19,9 +18,9 @@ jobs:
       - name: Use PostgreSQL
         uses: harmon758/postgresql-action@v1
         with:
-          postgresql-db: 'nc_news_test'
-          postgresql-user: 'test_user'
-          postgresql-password: 'test_password'
+          postgresql db: 'nc_news_test'
+          postgresql user: 'test_user'
+          postgresql password: 'test_password'
 
       - name: Install dependencies
         run: npm ci
@@ -33,9 +32,8 @@ jobs:
         run: PGDATABASE=nc_news_test PGUSER=test_user PGPASSWORD=test_password npm test
 
   deploy:
-    runs-on: ubuntu-latest
-    needs: tests
-    if: ${{ github.event_name == 'pull_request' && github.event.action == 'closed' && github.event.pull_request.merged == true }}
-    steps:
-      - name: Deploy to Render
-        run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
+      runs-on: ubuntu-latest
+      needs: tests # wait until test is successful before running this job
+      steps:
+        - name: Deploy to Render
+          run: curl ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
