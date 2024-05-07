@@ -159,6 +159,7 @@ exports.selectAllCommentsFromArticleId = (query, id) => {
     const { p: page = 1 }  = query
 
     let queryStr = `SELECT 
+        comment_id,
         body,
         votes, 
         author,  
