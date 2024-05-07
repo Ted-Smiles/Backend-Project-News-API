@@ -3,9 +3,13 @@ const app = express()
 
 const apiRouter = require("./routes/api-router")
 
+const cors = require('cors')
+
 const { getAllTopics, getAllEndpoints, getArticleById, getAllArticles, getAllCommentsFromArticleId, postNewComment, patchArticle, deleteComment, getAllUsers } = require("./controllers/controllers")
 
 app.use(express.json())
+
+app.use(cors())
 
 app.use('/api', apiRouter)
 
