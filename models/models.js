@@ -170,6 +170,7 @@ exports.selectAllCommentsFromArticleId = (query, id) => {
 
     queryStr += ` WHERE article_id = $1`
 
+    queryStr += ` ORDER BY created_at DESC`
         
     queryStr += ` LIMIT ${limit}`
 
