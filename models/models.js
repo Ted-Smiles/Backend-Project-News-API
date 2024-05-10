@@ -56,7 +56,7 @@ exports.selectAllArticles = (query) => {
     const { topic } = query
     const { sort_by = 'created_at' } = query
     const { order = 'DESC' } = query
-    const { limit = 10 } = query
+    const { limit = 9 } = query
     const { p: page = 1 }  = query
 
     if(!['ASC', 'DESC'].includes(order.toUpperCase())) {
@@ -93,7 +93,7 @@ exports.selectAllArticles = (query) => {
         queryStr += ` ORDER BY articles.${sort_by} ${order.toUpperCase()} LIMIT ${limit}`
     }
 
-    let offset = (page - 1) * 10
+    let offset = (page - 1) * 9
     if(offset < 0) {
         return Promise.reject({status: 400, msg: 'Invalid page number'})
     }

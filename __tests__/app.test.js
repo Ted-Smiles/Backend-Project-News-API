@@ -109,7 +109,7 @@ describe("/api/articles",()=>{
                 .then(({ body })=>{
                     const { articles } = body
                     const { total_count } = body
-                    expect(articles.length).toBe(10)
+                    expect(articles.length).toBe(9)
                     expect(total_count).toBe(13)
                     articles.forEach((article)=>{
                         expect.objectContaining({
@@ -131,7 +131,7 @@ describe("/api/articles",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
-                    expect(articles.length).toBe(10)
+                    expect(articles.length).toBe(9)
                     expect(articles).toBeSortedBy("created_at", {descending: true})
                 })
     })
@@ -141,7 +141,7 @@ describe("/api/articles",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
-                    expect(articles.length).toBe(10)
+                    expect(articles.length).toBe(9)
                     expect(articles).toBeSortedBy("title", {descending: true})
                 })
     })
@@ -151,7 +151,7 @@ describe("/api/articles",()=>{
             .expect(200)
                 .then(({ body })=>{
                     const { articles } = body
-                    expect(articles.length).toBe(10)
+                    expect(articles.length).toBe(9)
                     expect(articles).toBeSortedBy("created_at")
                 })
     })
@@ -162,7 +162,7 @@ describe("/api/articles",()=>{
                 .then(({ body })=>{
                     const { articles } = body
                     const { total_count } = body
-                    expect(articles.length).toBe(10)
+                    expect(articles.length).toBe(9)
                     expect(total_count).toBe(12)
                     expect(articles).toBeSortedBy("title")
                     articles.forEach((article)=>{
@@ -195,7 +195,7 @@ describe("/api/articles",()=>{
                 .then(({ body })=>{
                     const { articles } = body
                     const { total_count } = body
-                    expect(articles.length).toBe(10)
+                    expect(articles.length).toBe(9)
                     expect(total_count).toBe(12)
                     articles.forEach((article)=>{
                         expect(article.topic).toBe('mitch')
@@ -252,7 +252,7 @@ describe("/api/articles",()=>{
                 .then(({ body })=>{
                     const { articles } = body
                     const { total_count } = body
-                    expect(articles.length).toBe(10)
+                    expect(articles.length).toBe(9)
                     expect(total_count).toBe(13)
                     return articles
                 })
