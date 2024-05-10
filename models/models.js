@@ -63,7 +63,7 @@ exports.selectAllArticles = (query) => {
         return Promise.reject({status: 400, msg: 'Invalid order query'})
     }
 
-    if(!['title', 'topic', 'author', 'body', 'created_at', 'article_img_url'].includes(sort_by)) {
+    if(!['title', 'topic', 'author', 'body', 'created_at', 'article_img_url', 'votes'].includes(sort_by)) {
         return Promise.reject({status: 400, msg: 'Invalid sort query'})
     }
 
