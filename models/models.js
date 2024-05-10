@@ -87,7 +87,11 @@ exports.selectAllArticles = (query) => {
 
     queryStr += ` GROUP BY articles.article_id`
     
-    queryStr += ` ORDER BY articles.${sort_by} ${order.toUpperCase()} LIMIT ${limit}`
+    if (sort_by === 'comment_count') {
+        queryStr += ` ORDER BY ${sort_by} ${order.toUpperCase()} LIMIT ${limit}`
+    } else {
+        queryStr += ` ORDER BY articles.${sort_by} ${order.toUpperCase()} LIMIT ${limit}`
+    }
 
     let offset = (page - 1) * 10
     if(offset < 0) {
