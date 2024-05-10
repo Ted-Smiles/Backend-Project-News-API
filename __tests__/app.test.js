@@ -633,6 +633,7 @@ describe("/api/articles/:article_id/comments",()=>{
             .get("/api/articles/1/comments")
             .expect(200)
                 .then(({ body })=>{
+
                     const { comments } = body
                     const { total_count } = body
                     expect(comments.length).toBe(10)
