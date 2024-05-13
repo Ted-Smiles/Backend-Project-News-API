@@ -274,7 +274,7 @@ describe("/api/articles",()=>{
                 .then(({ body })=>{
                     const { articles } = body
                     const { total_count } = body
-                    expect(articles.length).toBe(3)
+                    expect(articles.length).toBe(4)
                     expect(total_count).toBe(13)
                     return articles
                 })

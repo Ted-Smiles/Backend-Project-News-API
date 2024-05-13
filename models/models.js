@@ -56,7 +56,7 @@ exports.selectAllArticles = (query) => {
     const { topic } = query
     const { sort_by = 'created_at' } = query
     const { order = 'DESC' } = query
-    const { limit = 9 } = query
+    const { limit =  } = query
     const { p: page = 1 }  = query
 
     if(!['ASC', 'DESC'].includes(order.toUpperCase())) {
